@@ -675,7 +675,7 @@ func (c *config) Validate(fsys fs.FS) error {
 		c.Db.Image = pg14Image
 	case 15:
 		if len(c.Experimental.OrioleDBVersion) > 0 {
-			c.Db.Image = "supabase/postgres:orioledb-" + c.Experimental.OrioleDBVersion
+			c.Db.Image = fmt.Sprintf("supabase/postgres:%s-orioledb", c.Experimental.OrioleDBVersion)
 			if err := assertEnvLoaded(c.Experimental.S3Host); err != nil {
 				return err
 			}

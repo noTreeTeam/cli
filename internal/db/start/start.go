@@ -68,7 +68,7 @@ func NewContainerConfig() container.Config {
 	}
 	if len(utils.Config.Experimental.OrioleDBVersion) > 0 {
 		env = append(env,
-			"POSTGRES_INITDB_ARGS=--lc-collate=C",
+			"POSTGRES_INITDB_ARGS=--lc-collate=C --lc-ctype=C",
 			fmt.Sprintf("S3_ENABLED=%t", true),
 			"S3_HOST="+utils.Config.Experimental.S3Host,
 			"S3_REGION="+utils.Config.Experimental.S3Region,
@@ -89,14 +89,24 @@ func NewContainerConfig() container.Config {
 		},
 		Entrypoint: []string{"sh", "-c", `
 cat <<'EOF' > /etc/postgresql.schema.sql && \
-cat <<'EOF' > /etc/postgresql-custom/pgsodium_root.key && \
+cat <<'EOF' > /usr/share/postgresql/extension/pgsodium_getkey && \
 cat <<'EOF' >> /etc/postgresql/postgresql.conf && \
+chmod 777 /usr/share/postgresql/extension/pgsodium_getkey && \
 docker-entrypoint.sh postgres -D /etc/postgresql
 ` + initialSchema + `
 ` + webhookSchema + `
 ` + _supabaseSchema + `
 EOF
-` + utils.Config.Db.RootKey + `
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+KEY_FILE="${1:-/tmp/pgsodium.key}"
+
+if [[ ! -f "$KEY_FILE" ]]; then
+    head -c 32 /dev/urandom | od -A n -t x1 | tr -d ' \n' > "$KEY_FILE"
+fi
+cat $KEY_FILE
 EOF
 ` + utils.Config.Db.Settings.ToPostgresConfig() + `
 EOF`},
@@ -149,15 +159,25 @@ EOF`}
 		config.Entrypoint = []string{"sh", "-c", `
 cat <<'EOF' > /etc/postgresql.schema.sql && \
 cat <<'EOF' > /docker-entrypoint-initdb.d/migrate.sh && \
-cat <<'EOF' > /etc/postgresql-custom/pgsodium_root.key && \
+cat <<'EOF' > /usr/share/postgresql/extension/pgsodium_getkey && \
 cat <<'EOF' >> /etc/postgresql/postgresql.conf && \
+chmod 777 /usr/share/postgresql/extension/pgsodium_getkey && \
 docker-entrypoint.sh postgres -D /etc/postgresql
 ` + initialSchema + `
 ` + _supabaseSchema + `
 EOF
 ` + restoreScript + `
 EOF
-` + utils.Config.Db.RootKey + `
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+KEY_FILE="${1:-/tmp/pgsodium.key}"
+
+if [[ ! -f "$KEY_FILE" ]]; then
+    head -c 32 /dev/urandom | od -A n -t x1 | tr -d ' \n' > "$KEY_FILE"
+fi
+cat $KEY_FILE
 EOF
 ` + utils.Config.Db.Settings.ToPostgresConfig() + `
 EOF`}
