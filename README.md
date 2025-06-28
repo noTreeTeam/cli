@@ -170,7 +170,7 @@ Default repository is `supabase/cli` so the action can replace the official setu
 ```yaml
 steps:
   - uses: actions/checkout@v4
-  - uses: ./github/actions/setup-cli
+  - uses: ./.github/workflows/setup-cli
     with:
       repo: <owner>/<repo>
       version: latest
