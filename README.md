@@ -162,6 +162,21 @@ npx supabase bootstrap
 ```
 
 The bootstrap command will guide you through the process of setting up a Supabase project using one of the [starter](https://github.com/supabase-community/supabase-samples/blob/main/samples.json) templates.
+### GitHub Actions
+
+Use the bundled action to install the CLI from any GitHub repository.
+Default repository is `supabase/cli` so the action can replace the official setup step.
+
+```yaml
+steps:
+  - uses: actions/checkout@v4
+  - uses: ./.github/actions/setup-cli
+    with:
+      repo: <owner>/<repo>
+      version: latest
+  - run: supabase --version
+```
+
 
 ## Docs
 
