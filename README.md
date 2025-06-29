@@ -220,7 +220,7 @@ The bootstrap command will guide you through the process of setting up a Supabas
 ### GitHub Actions
 
 Use the bundled action to install the CLI from any GitHub repository.
-Default repository is `supabase/cli` so the action can replace the official setup step.
+Default repository is `noTreeTeam/cli` so the action can replace the official setup step.
 
 ```yaml
 steps:

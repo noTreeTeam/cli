@@ -8,6 +8,6 @@ jobs:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/setup-cli
         with:
-          repo: supabase/cli
+          repo: noTreeTeam/cli
           version: latest
       - run: supabase --version
