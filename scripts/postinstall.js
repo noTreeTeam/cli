@@ -45,7 +45,7 @@ const getDownloadUrl = (repo, version) => {
 const fetchAndParseCheckSumFile = async (repo, version, agent) => {
   // Use 'supabase' as the binary name for checksum file
   const binaryName = 'supabase';
-  const checksumFileUrl = `https://github.com/${repo}/releases/download/v${version}/${binaryName}_${version}_checksums.txt`;
+  const checksumFileUrl = `https://github.com/${repo}/releases/download/v${version}/${binaryName}_v${version}_checksums.txt`;
 
   // Fetch the checksum file
   console.info("Downloading", checksumFileUrl);
