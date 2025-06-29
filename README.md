@@ -1,21 +1,56 @@
-# Supabase CLI
+# Supabase CLI (noTreeTeam Fork)
 
 [![Coverage Status](https://coveralls.io/repos/github/supabase/cli/badge.svg?branch=main)](https://coveralls.io/github/supabase/cli?branch=main) [![Bitbucket Pipelines](https://img.shields.io/bitbucket/pipelines/supabase-cli/setup-cli/master?style=flat-square&label=Bitbucket%20Canary)](https://bitbucket.org/supabase-cli/setup-cli/pipelines) [![Gitlab Pipeline Status](https://img.shields.io/gitlab/pipeline-status/sweatybridge%2Fsetup-cli?label=Gitlab%20Canary)
 ](https://gitlab.com/sweatybridge/setup-cli/-/pipelines)
 
-[Supabase](https://supabase.io) is an open source Firebase alternative. We're building the features of Firebase using enterprise-grade open source tools.
+This is a fork of the [Supabase CLI](https://github.com/supabase/cli) with custom modifications for the noTreeTeam organization.
 
-This repository contains all the functionality for Supabase CLI.
+## Key Differences from Upstream
 
-- [x] Running Supabase locally
-- [x] Managing database migrations
-- [x] Creating and deploying Supabase Functions
-- [x] Generating types directly from your database schema
-- [x] Making authenticated HTTP requests to [Management API](https://supabase.com/docs/reference/api/introduction)
+- **Custom Postgres Image**: Uses `ghcr.io/notreeteam/postgres:latest` instead of the default Supabase Postgres image
+- **Published to GitHub Packages**: Available as `@notreeteam/supabase-cli` on GitHub Packages
+- **Automated Releases**: Regularly updated to track upstream changes
 
 ## Getting started
 
-### Install the CLI
+### Install the CLI (noTreeTeam Fork)
+
+#### Via GitHub Packages (Recommended)
+
+1. Create or update your `.npmrc` file to configure the GitHub Packages registry:
+
+```
+@notreeteam:registry=https://npm.pkg.github.com
+//npm.pkg.github.com/:_authToken=YOUR_GITHUB_TOKEN
+```
+
+2. Generate a GitHub Personal Access Token with `read:packages` scope at: https://github.com/settings/tokens
+
+3. Install the package:
+
+```bash
+npm install @notreeteam/supabase-cli --save-dev
+```
+
+4. Use the CLI:
+
+```bash
+npx supabase --help
+```
+
+#### Direct from GitHub Repository
+
+Alternatively, you can install directly from the GitHub repository:
+
+```json
+{
+  "devDependencies": {
+    "supabase": "github:noTreeTeam/cli"
+  }
+}
+```
+
+### Install the Original Supabase CLI
 
 Available via [NPM](https://www.npmjs.com) as dev dependency. To install:
 
