@@ -155,7 +155,44 @@ jobs:
         if: steps.release_decision.outputs.should_release == 'true'
         run: |
           go mod tidy
-          go build -o supabase-cli .
+          
+          # Build for multiple platforms
+          mkdir -p dist
+          
+          # Build for Linux AMD64
+          GOOS=linux GOARCH=amd64 go build -o dist/supabase_linux_amd64/supabase .
+          cd dist && tar -czf supabase_linux_amd64.tar.gz supabase_linux_amd64/
+          cd ..
+          
+          # Build for Linux ARM64
+          GOOS=linux GOARCH=arm64 go build -o dist/supabase_linux_arm64/supabase .
+          cd dist && tar -czf supabase_linux_arm64.tar.gz supabase_linux_arm64/
+          cd ..
+          
+          # Build for macOS AMD64
+          GOOS=darwin GOARCH=amd64 go build -o dist/supabase_darwin_amd64/supabase .
+          cd dist && tar -czf supabase_darwin_amd64.tar.gz supabase_darwin_amd64/
+          cd ..
+          
+          # Build for macOS ARM64
+          GOOS=darwin GOARCH=arm64 go build -o dist/supabase_darwin_arm64/supabase .
+          cd dist && tar -czf supabase_darwin_arm64.tar.gz supabase_darwin_arm64/
+          cd ..
+          
+          # Build for Windows AMD64
+          GOOS=windows GOARCH=amd64 go build -o dist/supabase_windows_amd64/supabase.exe .
+          cd dist && tar -czf supabase_windows_amd64.tar.gz supabase_windows_amd64/
+          cd ..
+          
+          # Build for Windows ARM64
+          GOOS=windows GOARCH=arm64 go build -o dist/supabase_windows_arm64/supabase.exe .
+          cd dist && tar -czf supabase_windows_arm64.tar.gz supabase_windows_arm64/
+          cd ..
+          
+          # Generate checksums
+          cd dist
+          sha256sum *.tar.gz > supabase_${{ steps.current_version.outputs.version }}_checksums.txt
+          cd ..
 
       - name: Create release
         if: steps.release_decision.outputs.should_release == 'true'
@@ -197,14 +234,16 @@ jobs:
           For more information, see the [original Supabase CLI documentation](https://supabase.com/docs/reference/cli/about).
           EOF
           
-          # Create the release
+          # Create the release with assets
           gh release create "v$VERSION" \
             --title "Supabase CLI Fork v$VERSION" \
             --notes-file release_notes.md \
             --draft=false \
-            --prerelease=false
+            --prerelease=false \
+            dist/*.tar.gz \
+            dist/supabase_${VERSION}_checksums.txt
           
-          echo "Release v$VERSION created successfully"
+          echo "Release v$VERSION created successfully with binaries"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
