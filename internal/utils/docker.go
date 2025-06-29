@@ -217,8 +217,15 @@ func GetRegistryImageUrl(imageName string) string {
 }
 
 func DockerImagePull(ctx context.Context, imageTag string, w io.Writer) error {
+	// Only use registry auth if pulling from the configured registry
+	var auth string
+	registry := GetRegistry()
+	if strings.HasPrefix(imageTag, registry+"/") {
+		auth = GetRegistryAuth()
+	}
+	
 	out, err := Docker.ImagePull(ctx, imageTag, image.PullOptions{
-		RegistryAuth: GetRegistryAuth(),
+		RegistryAuth: auth,
 	})
 	if err != nil {
 		return errors.Errorf("failed to pull docker image: %w", err)
