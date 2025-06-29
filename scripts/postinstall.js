@@ -37,13 +37,17 @@ const readPackageJson = async () => {
 };
 
 // Build the download url from package.json
-const getDownloadUrl = (pkgName, repo, version) => {
-  const url = `https://github.com/${repo}/releases/download/v${version}/${pkgName}_${platform}_${arch}.tar.gz`;
+const getDownloadUrl = (repo, version) => {
+  // Always use 'supabase' as the binary name regardless of package name
+  const binaryName = 'supabase';
+  const url = `https://github.com/${repo}/releases/download/v${version}/${binaryName}_${platform}_${arch}.tar.gz`;
   return url;
 };
 
-const fetchAndParseCheckSumFile = async (pkgName, repo, version, agent) => {
-  const checksumFileUrl = `https://github.com/${repo}/releases/download/v${version}/${pkgName}_${version}_checksums.txt`;
+const fetchAndParseCheckSumFile = async (repo, version, agent) => {
+  // Use 'supabase' as the binary name for checksum file
+  const binaryName = 'supabase';
+  const checksumFileUrl = `https://github.com/${repo}/releases/download/v${version}/${binaryName}_${version}_checksums.txt`;
 
   // Fetch the checksum file
   console.info("Downloading", checksumFileUrl);
@@ -134,14 +138,15 @@ async function main() {
   }
 
   // First, fetch the checksum map.
-  const checksumMap = await fetchAndParseCheckSumFile(pkg.name, repo, version, agent);
+  const checksumMap = await fetchAndParseCheckSumFile(repo, version, agent);
 
   // Then, download the binary.
-  const url = getDownloadUrl(pkg.name, repo, version);
+  const url = getDownloadUrl(repo, version);
   console.info("Downloading", url);
   const resp = await fetch(url, { agent });
   const hash = createHash("sha256");
-  const pkgNameWithPlatform = `${pkg.name}_${platform}_${arch}.tar.gz`;
+  const binaryName = 'supabase';
+  const pkgNameWithPlatform = `${binaryName}_${platform}_${arch}.tar.gz`;
 
   // Then, decompress the binary -- we will first Un-GZip, then we will untar.
   const ungz = zlib.createGunzip();
