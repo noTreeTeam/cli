@@ -14,14 +14,17 @@ jobs:
   settings:
     runs-on: ubuntu-latest
     env:
-      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      GITHUB_TOKEN: ${{ github.token }}
     outputs:
       release_tag: ${{ steps.prerelease.outputs.tagName }}
     steps:
       - uses: actions/checkout@v4
       - id: prerelease
         run: |
-          tag=$(gh release list --limit 1 --json tagName --jq '.[0].tagName')
+          tag=$(gh release list --limit 1 --json tagName --jq '.[0].tagName' 2>/dev/null || true)
+          if [ -z "$tag" ]; then
+            tag=$(curl -s https://api.github.com/repos/${{ github.repository }}/releases/latest | jq -r .tag_name)
+          fi
           echo "tagName=$tag" >> "$GITHUB_OUTPUT"
       - run: gh release edit ${{ steps.prerelease.outputs.tagName }} --latest --prerelease=false
 
@@ -38,7 +41,7 @@ jobs:
           cache: true
       - run: go run tools/publish/main.go ${{ needs.settings.outputs.release_tag }}
         env:
-          GITHUB_TOKEN: ${{ secrets.GH_PAT }}
+          GITHUB_TOKEN: ${{ github.token }}
 
   publish:
     name: Publish NPM
@@ -49,18 +52,6 @@ jobs:
       release: ${{ needs.settings.outputs.release_tag }}
     secrets: inherit
 
-  compose:
-    name: Bump self-hosted versions
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-go@v5
-        with:
-          go-version-file: go.mod
-          cache: true
-      - run: go run tools/selfhost/main.go
-        env:
-          GITHUB_TOKEN: ${{ secrets.GH_PAT }}
 
   changelog:
     name: Publish changelog
@@ -74,10 +65,9 @@ jobs:
         with:
           go-version-file: go.mod
           cache: true
-      - run: go run tools/changelog/main.go ${{ secrets.SLACK_CHANNEL }}
+      - run: go run tools/changelog/main.go
         env:
-          GITHUB_TOKEN: ${{ secrets.GH_PAT }}
-          SLACK_TOKEN: ${{ secrets.SLACK_TOKEN }}
+          GITHUB_TOKEN: ${{ github.token }}
 
   docs:
     name: Publish reference docs
@@ -92,4 +82,4 @@ jobs:
           cache: true
       - run: go run docs/main.go ${{ needs.settings.outputs.release_tag }} | go run tools/bumpdoc/main.go apps/docs/spec/cli_v1_commands.yaml
         env:
-          GITHUB_TOKEN: ${{ secrets.GH_PAT }}
+          GITHUB_TOKEN: ${{ github.token }}
