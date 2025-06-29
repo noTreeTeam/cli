@@ -1,0 +1,229 @@
+name: Auto Release
+
+on:
+  schedule:
+    # Check for updates daily at 2 AM UTC
+    - cron: '0 2 * * *'
+  workflow_dispatch:
+    inputs:
+      force_release:
+        description: 'Force create a new release even if no changes detected'
+        required: false
+        default: false
+        type: boolean
+
+permissions:
+  contents: write
+  packages: write
+
+jobs:
+  check-and-release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout current repo
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+          cache: true
+
+      - name: Get current version from go.mod
+        id: current_version
+        run: |
+          # Extract version from go.mod or use a default
+          VERSION=$(grep -E '^go [0-9]+\.' go.mod | cut -d' ' -f2 || echo "1.0.0")
+          # For CLI versioning, let's use a date-based version with patch
+          DATE_VERSION=$(date +"%Y.%m.%d")
+          echo "version=$DATE_VERSION" >> $GITHUB_OUTPUT
+          echo "Current version: $DATE_VERSION"
+
+      - name: Check if release exists
+        id: check_release
+        run: |
+          VERSION="${{ steps.current_version.outputs.version }}"
+          if gh release view "v$VERSION" >/dev/null 2>&1; then
+            echo "release_exists=true" >> $GITHUB_OUTPUT
+            echo "Release v$VERSION already exists"
+          else
+            echo "release_exists=false" >> $GITHUB_OUTPUT
+            echo "Release v$VERSION does not exist"
+          fi
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Get latest upstream release
+        id: upstream_release
+        run: |
+          UPSTREAM_VERSION=$(curl -s https://api.github.com/repos/supabase/cli/releases/latest | jq -r .tag_name)
+          echo "upstream_version=$UPSTREAM_VERSION" >> $GITHUB_OUTPUT
+          echo "Latest upstream version: $UPSTREAM_VERSION"
+
+      - name: Check if upstream has newer version
+        id: version_check
+        run: |
+          UPSTREAM_VERSION="${{ steps.upstream_release.outputs.upstream_version }}"
+          CURRENT_VERSION="v${{ steps.current_version.outputs.version }}"
+          
+          # Get the last release tag from our repo
+          LAST_RELEASE=$(gh release list --limit 1 --json tagName --jq '.[0].tagName' 2>/dev/null || echo "v0.0.0")
+          
+          # Extract the upstream version that was used for the last release
+          LAST_UPSTREAM_VERSION=$(gh release view "$LAST_RELEASE" --json body --jq '.body' 2>/dev/null | grep -oP 'Based on upstream version: \K[^\s]+' || echo "v0.0.0")
+          
+          echo "last_release=$LAST_RELEASE" >> $GITHUB_OUTPUT
+          echo "last_upstream_version=$LAST_UPSTREAM_VERSION" >> $GITHUB_OUTPUT
+          
+          if [ "$UPSTREAM_VERSION" != "$LAST_UPSTREAM_VERSION" ]; then
+            echo "needs_release=true" >> $GITHUB_OUTPUT
+            echo "Upstream has newer version: $UPSTREAM_VERSION (was: $LAST_UPSTREAM_VERSION)"
+          else
+            echo "needs_release=false" >> $GITHUB_OUTPUT
+            echo "No new upstream version detected"
+          fi
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Decide if release is needed
+        id: release_decision
+        run: |
+          RELEASE_EXISTS="${{ steps.check_release.outputs.release_exists }}"
+          NEEDS_RELEASE="${{ steps.version_check.outputs.needs_release }}"
+          FORCE_RELEASE="${{ github.event.inputs.force_release }}"
+          
+          if [ "$FORCE_RELEASE" = "true" ]; then
+            echo "should_release=true" >> $GITHUB_OUTPUT
+            echo "reason=Force release requested" >> $GITHUB_OUTPUT
+          elif [ "$RELEASE_EXISTS" = "false" ]; then
+            echo "should_release=true" >> $GITHUB_OUTPUT
+            echo "reason=No release exists for current version" >> $GITHUB_OUTPUT
+          elif [ "$NEEDS_RELEASE" = "true" ]; then
+            echo "should_release=true" >> $GITHUB_OUTPUT
+            echo "reason=Upstream has newer version" >> $GITHUB_OUTPUT
+          else
+            echo "should_release=false" >> $GITHUB_OUTPUT
+            echo "reason=No release needed" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Fetch latest changes from upstream
+        if: steps.release_decision.outputs.should_release == 'true'
+        run: |
+          # Add upstream remote if it doesn't exist
+          git remote add upstream https://github.com/supabase/cli.git || true
+          git fetch upstream main
+          
+          # Check if we have any local changes that need to be preserved
+          echo "Checking for local changes..."
+          git status --porcelain
+
+      - name: Update Postgres image and merge upstream changes
+        if: steps.release_decision.outputs.should_release == 'true'
+        run: |
+          # Stash any local changes
+          git stash push -m "Auto-stash before upstream merge" || true
+          
+          # Merge upstream changes
+          git merge upstream/main --no-edit || {
+            echo "Merge conflict detected, attempting to resolve..."
+            git merge --abort
+            git reset --hard upstream/main
+            echo "Hard reset to upstream/main completed"
+          }
+          
+          # Apply our custom Postgres image
+          sed -i 's|FROM supabase/postgres:[^[:space:]]*|FROM ghcr.io/notreeteam/postgres:latest|g' pkg/config/templates/Dockerfile
+          
+          # Update module path
+          sed -i 's|github.com/supabase/cli|github.com/noTreeTeam/cli|g' go.mod
+          sed -i 's|github.com/supabase/cli/pkg|github.com/noTreeTeam/cli/pkg|g' go.mod
+          sed -i 's|github.com/supabase/cli/pkg|github.com/noTreeTeam/cli/pkg|g' pkg/go.mod
+          
+          # Update all Go import paths
+          find . -name "*.go" -type f -exec sed -i 's|github.com/supabase/cli|github.com/noTreeTeam/cli|g' {} \;
+          
+          # Update package.json
+          jq '.name = "@notreeteam/supabase-cli" | .description = "Supabase CLI (noTreeTeam fork)" | .repository = "noTreeTeam/cli"' package.json > package.json.tmp && mv package.json.tmp package.json
+          
+          # Commit changes
+          git add .
+          git commit -m "Update to upstream ${{ steps.upstream_release.outputs.upstream_version }} with custom Postgres image" || echo "No changes to commit"
+
+      - name: Build CLI
+        if: steps.release_decision.outputs.should_release == 'true'
+        run: |
+          go mod tidy
+          go build -o supabase-cli .
+
+      - name: Create release
+        if: steps.release_decision.outputs.should_release == 'true'
+        run: |
+          VERSION="${{ steps.current_version.outputs.version }}"
+          UPSTREAM_VERSION="${{ steps.upstream_release.outputs.upstream_version }}"
+          
+          # Create release notes
+          cat > release_notes.md << EOF
+          # Supabase CLI Fork v$VERSION
+          
+          This is a fork of the Supabase CLI with custom modifications:
+          
+          ## Changes from upstream:
+          - **Custom Postgres Image**: Updated to use \`ghcr.io/notreeteam/postgres:latest\`
+          - **Namespace**: Published under \`@notreeteam/supabase-cli\` for easy consumption
+          
+          ## Based on upstream version: $UPSTREAM_VERSION
+          
+          ## Installation
+          
+          ### NPM
+          \`\`\`bash
+          npm install @notreeteam/supabase-cli
+          \`\`\`
+          
+          ### Go
+          \`\`\`bash
+          go install github.com/noTreeTeam/cli@latest
+          \`\`\`
+          
+          ## Usage
+          
+          Same as the original Supabase CLI:
+          \`\`\`bash
+          supabase --help
+          \`\`\`
+          
+          For more information, see the [original Supabase CLI documentation](https://supabase.com/docs/reference/cli/about).
+          EOF
+          
+          # Create the release
+          gh release create "v$VERSION" \
+            --title "Supabase CLI Fork v$VERSION" \
+            --notes-file release_notes.md \
+            --draft=false \
+            --prerelease=false
+          
+          echo "Release v$VERSION created successfully"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Push changes
+        if: steps.release_decision.outputs.should_release == 'true'
+        run: |
+          git push origin main
+          git push origin "v${{ steps.current_version.outputs.version }}"
+
+      - name: Summary
+        run: |
+          echo "## Release Summary" >> $GITHUB_STEP_SUMMARY
+          echo "- **Should Release**: ${{ steps.release_decision.outputs.should_release }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Reason**: ${{ steps.release_decision.outputs.reason }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Current Version**: v${{ steps.current_version.outputs.version }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Upstream Version**: ${{ steps.upstream_release.outputs.upstream_version }}" >> $GITHUB_STEP_SUMMARY
+          
+          if [ "${{ steps.release_decision.outputs.should_release }}" = "true" ]; then
+            echo "- **Release Created**: ✅ v${{ steps.current_version.outputs.version }}" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "- **Release Created**: ❌ Not needed" >> $GITHUB_STEP_SUMMARY
+          fi
