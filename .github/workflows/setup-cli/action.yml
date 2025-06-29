@@ -1,0 +1,40 @@
+name: Setup Supabase CLI (Custom)
+description: Install Supabase CLI from a specified GitHub repository
+inputs:
+  version:
+    description: Version of Supabase CLI to install (or "latest")
+    required: false
+    default: latest
+  repo:
+    description: GitHub repository hosting the CLI releases
+    required: false
+    default: supabase/cli
+runs:
+  using: composite
+  steps:
+    - shell: bash
+      run: |
+        set -euo pipefail
+        VERSION="${{ inputs.version }}"
+        REPO="${{ inputs.repo }}"
+        ARCH="$(uname -m)"
+        case "$ARCH" in
+          x86_64) ARCH="amd64" ;;
+          aarch64|arm64) ARCH="arm64" ;;
+        esac
+        OS="$(uname -s | tr '[:upper:]' '[:lower:]')"
+        FILE="supabase_${OS}_${ARCH}.tar.gz"
+        if [ "$VERSION" = "latest" ]; then
+          URL="https://github.com/${REPO}/releases/latest/download/${FILE}"
+        else
+          V="${VERSION#v}"
+          cmp=$(printf '%s\n1.28.0\n'$V | sort -V | head -n1)
+          if [ "$cmp" = "$V" ]; then
+            FILE="supabase_${V}_${OS}_${ARCH}.tar.gz"
+          fi
+          URL="https://github.com/${REPO}/releases/download/v${V}/${FILE}"
+        fi
+        echo "Downloading $URL"
+        mkdir -p "$RUNNER_TEMP/supabase-cli"
+        curl -fsSL "$URL" | tar -xz -C "$RUNNER_TEMP/supabase-cli"
+        echo "$RUNNER_TEMP/supabase-cli" >> "$GITHUB_PATH"
