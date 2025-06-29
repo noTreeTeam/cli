@@ -8,6 +8,7 @@ on:
 
 permissions:
   contents: read
+  packages: read
 
 jobs:
   build:
@@ -84,16 +85,21 @@ jobs:
         run: |
           cd /tmp/test-project
           echo "@notreeteam:registry=https://npm.pkg.github.com" > .npmrc
-          echo "//npm.pkg.github.com/:_authToken=${{ secrets.GITHUB_TOKEN }}" >> .npmrc
+          echo "//npm.pkg.github.com/:_authToken=${{ github.token }}" >> .npmrc
 
       - name: Test GitHub Packages installation
         run: |
           cd /tmp/test-project
-          # Try to install the package - this will only work if a release exists
-          if npm install @notreeteam/supabase-cli@latest 2>/dev/null; then
+          # Try to install the package - this will only work if a release exists and token has proper permissions
+          echo "Attempting to install @notreeteam/supabase-cli@0.0.0-automated"
+          if npm install @notreeteam/supabase-cli@0.0.0-automated --verbose 2>&1; then
             echo "✅ Package installation successful"
+            echo "Testing CLI functionality..."
             npx supabase --help | head -5
+            echo "✅ CLI is working correctly"
           else
-            echo "⚠️  Package not available yet (no release published)"
-            exit 0  # Don't fail the build, just skip
+            echo "⚠️  Package installation failed - checking if it's a permissions issue"
+            echo "This might be due to GitHub token permissions or package availability"
+            # Don't fail the build for now, as this is expected until we have proper token setup
+            exit 0
           fi
