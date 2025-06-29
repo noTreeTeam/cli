@@ -152,11 +152,19 @@ async function main() {
   const binaryName = 'supabase';
   const pkgNameWithPlatform = `${binaryName}_${platform}_${arch}.tar.gz`;
 
+  // Create a temporary directory for extraction
+  const tempDir = path.join(binDir, 'temp_extract');
+  await fs.promises.mkdir(tempDir, { recursive: true });
+
   // Then, decompress the binary -- we will first Un-GZip, then we will untar.
   const ungz = zlib.createGunzip();
   const binName = path.basename(binPath);
-  // Extract all files and then move the binary to the correct location
-  const untar = extract({ cwd: binDir });
+  // Extract to temporary directory
+  const untar = extract({ cwd: tempDir });
+
+  console.info("Extracting to temporary directory:", tempDir);
+  console.info("Target binary name:", binName);
+  console.info("Target binary path:", binPath);
 
   // Update the hash with the binary data as it's being downloaded.
   resp.body
@@ -190,30 +198,61 @@ async function main() {
     untar.on("end", () => resolve());
   });
 
-  // Move the binary from extracted directory to final location
+  console.info("Extraction completed. Looking for binary...");
+  
+  // Find and move the binary from the extracted directory structure
   const extractedDirName = `${binaryName}_${platform}_${arch}`;
-  const extractedBinaryPath = path.join(binDir, extractedDirName, binName);
-  const finalBinaryPath = path.join(binDir, binName);
-  
-  console.info("Looking for extracted binary at:", extractedBinaryPath);
-  console.info("Will move to:", finalBinaryPath);
-  
-  try {
-    await fs.promises.access(extractedBinaryPath);
-    console.info("Found extracted binary, moving...");
-    await fs.promises.rename(extractedBinaryPath, finalBinaryPath);
-    // Remove the empty directory
-    await fs.promises.rmdir(path.join(binDir, extractedDirName));
-    console.info("Binary moved successfully");
-  } catch (error) {
-    console.error("Error moving binary:", error.message);
-    // List what's actually in the bin directory
+  const possiblePaths = [
+    path.join(tempDir, extractedDirName, binName),  // Standard structure
+    path.join(tempDir, binName),  // Flat structure
+    path.join(tempDir, extractedDirName, `${binaryName}.exe`),  // Windows with .exe
+    path.join(tempDir, `${binaryName}.exe`)  // Flat Windows
+  ];
+
+  let foundBinary = false;
+  for (const sourcePath of possiblePaths) {
     try {
-      const files = await fs.promises.readdir(binDir);
-      console.info("Files in bin directory:", files);
-    } catch (e) {
-      console.error("Could not list bin directory:", e.message);
+      await fs.promises.access(sourcePath);
+      console.info("Found binary at:", sourcePath);
+      await fs.promises.copyFile(sourcePath, binPath);
+      console.info("Binary copied to:", binPath);
+      foundBinary = true;
+      break;
+    } catch (error) {
+      console.info("Binary not found at:", sourcePath);
     }
+  }
+
+  if (!foundBinary) {
+    // List what was actually extracted
+    console.error("Binary not found! Listing extracted contents:");
+    try {
+      const walk = async (dir, prefix = '') => {
+        const files = await fs.promises.readdir(dir);
+        for (const file of files) {
+          const fullPath = path.join(dir, file);
+          const stat = await fs.promises.stat(fullPath);
+          if (stat.isDirectory()) {
+            console.error(prefix + file + '/');
+            await walk(fullPath, prefix + '  ');
+          } else {
+            console.error(prefix + file);
+          }
+        }
+      };
+      await walk(tempDir);
+    } catch (e) {
+      console.error("Could not list extracted files:", e.message);
+    }
+    throw new Error("Could not find extracted binary");
+  }
+
+  // Clean up temporary directory
+  try {
+    await fs.promises.rm(tempDir, { recursive: true });
+    console.info("Cleaned up temporary directory");
+  } catch (error) {
+    console.warn("Could not clean up temporary directory:", error.message);
   }
 
   // Link the binaries in postinstall to support yarn
