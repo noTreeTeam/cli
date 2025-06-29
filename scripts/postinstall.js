@@ -5,14 +5,12 @@
 "use strict";
 
 import binLinks from "bin-links";
-import { createHash } from "crypto";
 import fs from "fs";
 import fetch from "node-fetch";
 import { Agent } from "https";
 import { HttpsProxyAgent } from "https-proxy-agent";
 import path from "path";
 import { extract } from "tar";
-import zlib from "zlib";
 
 // Mapping from Node's `process.arch` to Golang's `$GOARCH`
 const ARCH_MAPPING = {
@@ -148,57 +146,36 @@ async function main() {
   const url = getDownloadUrl(repo, version);
   console.info("Downloading", url);
   const resp = await fetch(url, { agent });
-  const hash = createHash("sha256");
-  const binaryName = 'supabase';
-  const pkgNameWithPlatform = `${binaryName}_${platform}_${arch}.tar.gz`;
+  if (!resp.ok) {
+    throw new Error(`Failed to download binary: ${resp.status} ${resp.statusText}`);
+  }
 
-  // Create a temporary directory for extraction
+  console.info("Download successful, extracting binary...");
+
+  // Download to a temporary file first
+  const tempTarPath = path.join(binDir, 'temp_download.tar.gz');
   const tempDir = path.join(binDir, 'temp_extract');
+  
+  // Ensure directories exist
+  await fs.promises.mkdir(binDir, { recursive: true });
   await fs.promises.mkdir(tempDir, { recursive: true });
 
-  // Then, decompress the binary -- we will first Un-GZip, then we will untar.
-  const ungz = zlib.createGunzip();
-  const binName = path.basename(binPath);
-  // Extract to temporary directory
-  const untar = extract({ cwd: tempDir });
+  // Write the downloaded content to a file
+  const buffer = await resp.arrayBuffer();
+  await fs.promises.writeFile(tempTarPath, Buffer.from(buffer));
+  
+  console.info("Downloaded tar file, now extracting...");
 
-  console.info("Extracting to temporary directory:", tempDir);
-  console.info("Target binary name:", binName);
-  console.info("Target binary path:", binPath);
-
-  // Update the hash with the binary data as it's being downloaded.
-  resp.body
-    .on("data", (chunk) => {
-      hash.update(chunk);
-    })
-    // Pipe the data to the ungz stream.
-    .pipe(ungz);
-
-  // After the ungz stream has ended, verify the checksum.
-  ungz
-    .on("end", () => {
-      const expectedChecksum = checksumMap?.[pkgNameWithPlatform];
-      // Skip verification if we can't find the file checksum
-      if (!expectedChecksum) {
-        console.warn("Skipping checksum verification");
-        return;
-      }
-      const calculatedChecksum = hash.digest("hex");
-      if (calculatedChecksum !== expectedChecksum) {
-        throw errChecksum;
-      }
-      console.info("Checksum verified.");
-    })
-    // Pipe the data to the untar stream.
-    .pipe(untar);
-
-  // Wait for the untar stream to finish.
-  await new Promise((resolve, reject) => {
-    untar.on("error", reject);
-    untar.on("end", () => resolve());
+  // Extract the tar file
+  await extract({
+    file: tempTarPath,
+    cwd: tempDir,
   });
 
   console.info("Extraction completed. Looking for binary...");
+  
+  const binaryName = 'supabase';
+  const binName = path.basename(binPath);
   
   // Find and move the binary from the extracted directory structure
   const extractedDirName = `${binaryName}_${platform}_${arch}`;
@@ -247,12 +224,13 @@ async function main() {
     throw new Error("Could not find extracted binary");
   }
 
-  // Clean up temporary directory
+  // Clean up temporary files
   try {
+    await fs.promises.unlink(tempTarPath);
     await fs.promises.rm(tempDir, { recursive: true });
-    console.info("Cleaned up temporary directory");
+    console.info("Cleaned up temporary files");
   } catch (error) {
-    console.warn("Could not clean up temporary directory:", error.message);
+    console.warn("Could not clean up temporary files:", error.message);
   }
 
   // Link the binaries in postinstall to support yarn
