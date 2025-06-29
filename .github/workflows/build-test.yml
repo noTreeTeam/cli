@@ -49,8 +49,22 @@ jobs:
         with:
           node-version: '20'
 
-      - name: Test npm install
-        run: npm install --ignore-scripts  # Skip postinstall during CI testing
+      - name: Test npm install (without postinstall)
+        run: npm install --ignore-scripts
 
-      - name: Test postinstall script
-        run: echo "Skipping postinstall test until first release is available"
+      - name: Test postinstall script manually
+        run: |
+          echo "Testing postinstall script..."
+          node scripts/postinstall.js
+          
+      - name: Verify binary installation
+        run: |
+          echo "Checking if binary was installed..."
+          ls -la bin/
+          if [ -f "bin/supabase" ]; then
+            echo "Binary found at bin/supabase"
+            ./bin/supabase --version
+          else
+            echo "Binary not found at bin/supabase"
+            exit 1
+          fi
