@@ -11,6 +11,9 @@ func TestDeleteAll(t *testing.T) {
 	service := "test-cli"
 	// Nothing to delete
 	err := keyring.DeleteAll(service)
+	if err != nil && err.Error() == "The name org.freedesktop.secrets was not provided by any .service files" {
+		t.Skip("Keyring service not available in this environment")
+	}
 	assert.NoError(t, err)
 	// Setup 2 items
 	err = keyring.Set(service, "key1", "value")
