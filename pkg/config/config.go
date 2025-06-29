@@ -762,7 +762,7 @@ func (c *config) Validate(fsys fs.FS) error {
 		// TODO: support oriole db 17 eventually
 	case 15:
 		if len(c.Experimental.OrioleDBVersion) > 0 {
-			c.Db.Image = "supabase/postgres:orioledb-" + c.Experimental.OrioleDBVersion
+			c.Db.Image = "ghcr.io/notreeteam/postgres:orioledb-" + c.Experimental.OrioleDBVersion
 			if err := assertEnvLoaded(c.Experimental.S3Host); err != nil {
 				return err
 			}

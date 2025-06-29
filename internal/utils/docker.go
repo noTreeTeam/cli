@@ -183,8 +183,8 @@ func GetRegistryAuth() string {
 	return registryAuth
 }
 
-// Defaults to Supabase public ECR for faster image pull
-const defaultRegistry = "public.ecr.aws"
+// Defaults to noTreeTeam GitHub Container Registry
+const defaultRegistry = "ghcr.io"
 
 func GetRegistry() string {
 	registry := viper.GetString("INTERNAL_IMAGE_REGISTRY")
@@ -202,6 +202,9 @@ func GetRegistryImageUrl(imageName string) string {
 	// Configure mirror registry
 	parts := strings.Split(imageName, "/")
 	imageName = parts[len(parts)-1]
+	if registry == "ghcr.io" {
+		return registry + "/notreeteam/" + imageName
+	}
 	return registry + "/supabase/" + imageName
 }
 
