@@ -98,13 +98,17 @@ async function main() {
 
   // Read from package.json and prepare for the installation.
   const pkg = await readPackageJson();
+  
+  // Use the actual bin key from package.json (should be "supabase")
+  const binKey = Object.keys(pkg.bin)[0]; // Get the first (and likely only) bin key
+  
   if (platform === "windows") {
     // Update bin path in package.json
-    pkg.bin[pkg.name] += ".exe";
+    pkg.bin[binKey] += ".exe";
   }
 
   // Prepare the installation path by creating the directory if it doesn't exist.
-  const binPath = pkg.bin[pkg.name];
+  const binPath = pkg.bin[binKey];
   const binDir = path.dirname(binPath);
   await fs.promises.mkdir(binDir, { recursive: true });
 
