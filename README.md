@@ -35,6 +35,13 @@ When installing with yarn 4, you need to disable experimental fetch with the fol
 NODE_OPTIONS=--no-experimental-fetch yarn add supabase
 ```
 
+You can override the GitHub repository and release used by the installer by setting environment variables.
+Specify `SUPABASE_REPO` for the repository and `SUPABASE_VERSION` for the tag name (use `latest` to fetch the most recent release):
+
+```bash
+SUPABASE_REPO=myorg/cli SUPABASE_VERSION=latest npm i github:myorg/cli --save-dev
+```
+
 > **Note**
 For Bun versions below v1.0.17, you must add `supabase` as a [trusted dependency](https://bun.sh/guides/install/trusted) before running `bun add -D supabase`.
 

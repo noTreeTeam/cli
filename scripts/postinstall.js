@@ -37,18 +37,12 @@ const readPackageJson = async () => {
 };
 
 // Build the download url from package.json
-const getDownloadUrl = (packageJson) => {
-  const pkgName = packageJson.name;
-  const version = packageJson.version;
-  const repo = packageJson.repository;
+const getDownloadUrl = (pkgName, repo, version) => {
   const url = `https://github.com/${repo}/releases/download/v${version}/${pkgName}_${platform}_${arch}.tar.gz`;
   return url;
 };
 
-const fetchAndParseCheckSumFile = async (packageJson, agent) => {
-  const version = packageJson.version;
-  const pkgName = packageJson.name;
-  const repo = packageJson.repository;
+const fetchAndParseCheckSumFile = async (pkgName, repo, version, agent) => {
   const checksumFileUrl = `https://github.com/${repo}/releases/download/v${version}/${pkgName}_${version}_checksums.txt`;
 
   // Fetch the checksum file
@@ -121,11 +115,29 @@ async function main() {
     ? new HttpsProxyAgent(proxyUrl, { keepAlive: true })
     : new Agent({ keepAlive: true });
 
+  // Resolve repository and version from environment or package.json
+  const repo = process.env.SUPABASE_REPO || pkg.repository;
+  let version = process.env.SUPABASE_VERSION || pkg.version;
+
+  if (version === "latest") {
+    const api = `https://api.github.com/repos/${repo}/releases/latest`;
+    console.info("Querying", api);
+    const resp = await fetch(api, {
+      agent,
+      headers: { "User-Agent": "supabase-cli" },
+    });
+    if (!resp.ok) {
+      throw new Error(`Failed to get latest release: ${resp.status} ${resp.statusText}`);
+    }
+    const data = await resp.json();
+    version = data.tag_name.replace(/^v/, "");
+  }
+
   // First, fetch the checksum map.
-  const checksumMap = await fetchAndParseCheckSumFile(pkg, agent);
+  const checksumMap = await fetchAndParseCheckSumFile(pkg.name, repo, version, agent);
 
   // Then, download the binary.
-  const url = getDownloadUrl(pkg);
+  const url = getDownloadUrl(pkg.name, repo, version);
   console.info("Downloading", url);
   const resp = await fetch(url, { agent });
   const hash = createHash("sha256");
