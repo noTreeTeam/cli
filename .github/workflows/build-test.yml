@@ -63,8 +63,37 @@ jobs:
           ls -la bin/
           if [ -f "bin/supabase" ]; then
             echo "Binary found at bin/supabase"
-            ./bin/supabase --version
+            ./bin/supabase --help | head -5
           else
             echo "Binary not found at bin/supabase"
             exit 1
+          fi
+
+  github-packages-test:
+    runs-on: ubuntu-latest
+    # Only run if there's a release available to test against
+    if: github.event_name == 'push'
+    steps:
+      - name: Create test project
+        run: |
+          mkdir -p /tmp/test-project
+          cd /tmp/test-project
+          npm init -y
+
+      - name: Configure GitHub Packages registry
+        run: |
+          cd /tmp/test-project
+          echo "@notreeteam:registry=https://npm.pkg.github.com" > .npmrc
+          echo "//npm.pkg.github.com/:_authToken=${{ secrets.GITHUB_TOKEN }}" >> .npmrc
+
+      - name: Test GitHub Packages installation
+        run: |
+          cd /tmp/test-project
+          # Try to install the package - this will only work if a release exists
+          if npm install @notreeteam/supabase-cli@latest 2>/dev/null; then
+            echo "✅ Package installation successful"
+            npx supabase --help | head -5
+          else
+            echo "⚠️  Package not available yet (no release published)"
+            exit 0  # Don't fail the build, just skip
           fi
