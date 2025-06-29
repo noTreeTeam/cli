@@ -2,9 +2,10 @@
 
 ## Release process
 
-We release to stable channel every two weeks.
+We publish a new stable release automatically whenever commits are pushed to the
+`main` branch.
 
-We release to beta channel on merge to `main` branch.
+Beta releases are created from the `develop` branch.
 
 Hotfixes are released manually. Follow these steps:
 
