@@ -9,8 +9,8 @@ import (
 	"github.com/docker/docker/api/types/container"
 	"github.com/docker/docker/api/types/network"
 	"github.com/go-errors/errors"
-	"github.com/supabase/cli/internal/utils"
-	"github.com/supabase/cli/pkg/config"
+	"github.com/noTreeTeam/cli/internal/utils"
+	"github.com/noTreeTeam/cli/pkg/config"
 )
 
 //go:embed templates/migra.sh

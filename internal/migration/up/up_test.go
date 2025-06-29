@@ -9,10 +9,10 @@ import (
 	"github.com/spf13/afero"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-	"github.com/supabase/cli/internal/testing/fstest"
-	"github.com/supabase/cli/internal/utils"
-	"github.com/supabase/cli/pkg/migration"
-	"github.com/supabase/cli/pkg/pgtest"
+	"github.com/noTreeTeam/cli/internal/testing/fstest"
+	"github.com/noTreeTeam/cli/internal/utils"
+	"github.com/noTreeTeam/cli/pkg/migration"
+	"github.com/noTreeTeam/cli/pkg/pgtest"
 )
 
 func TestPendingMigrations(t *testing.T) {

@@ -6,8 +6,8 @@ import (
 
 	"github.com/h2non/gock"
 	"github.com/stretchr/testify/assert"
-	"github.com/supabase/cli/internal/testing/apitest"
-	"github.com/supabase/cli/internal/utils"
+	"github.com/noTreeTeam/cli/internal/testing/apitest"
+	"github.com/noTreeTeam/cli/internal/utils"
 )
 
 func TestSSOProvidersListCommand(t *testing.T) {

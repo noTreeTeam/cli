@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/supabase/cli/cmd"
+	"github.com/noTreeTeam/cli/cmd"
 )
 
 //go:generate go run github.com/oapi-codegen/oapi-codegen/v2/cmd/oapi-codegen --config=pkg/api/types.cfg.yaml https://api.supabase.green/api/v1-yaml

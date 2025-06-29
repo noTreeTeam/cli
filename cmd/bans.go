@@ -3,9 +3,9 @@ package cmd
 import (
 	"github.com/spf13/afero"
 	"github.com/spf13/cobra"
-	"github.com/supabase/cli/internal/bans/get"
-	"github.com/supabase/cli/internal/bans/update"
-	"github.com/supabase/cli/internal/utils/flags"
+	"github.com/noTreeTeam/cli/internal/bans/get"
+	"github.com/noTreeTeam/cli/internal/bans/update"
+	"github.com/noTreeTeam/cli/internal/utils/flags"
 )
 
 var (

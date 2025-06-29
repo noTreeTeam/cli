@@ -9,10 +9,10 @@ import (
 	"github.com/jackc/pgconn"
 	"github.com/jackc/pgx/v4"
 	"github.com/spf13/afero"
-	"github.com/supabase/cli/internal/db/reset"
-	"github.com/supabase/cli/internal/migration/list"
-	"github.com/supabase/cli/internal/utils"
-	"github.com/supabase/cli/pkg/pgxv5"
+	"github.com/noTreeTeam/cli/internal/db/reset"
+	"github.com/noTreeTeam/cli/internal/migration/list"
+	"github.com/noTreeTeam/cli/internal/utils"
+	"github.com/noTreeTeam/cli/pkg/pgxv5"
 )
 
 //go:embed table_record_counts.sql

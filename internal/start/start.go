@@ -23,14 +23,14 @@ import (
 	"github.com/jackc/pgconn"
 	"github.com/jackc/pgx/v4"
 	"github.com/spf13/afero"
-	"github.com/supabase/cli/internal/db/start"
-	"github.com/supabase/cli/internal/functions/serve"
-	"github.com/supabase/cli/internal/seed/buckets"
-	"github.com/supabase/cli/internal/services"
-	"github.com/supabase/cli/internal/status"
-	"github.com/supabase/cli/internal/utils"
-	"github.com/supabase/cli/internal/utils/flags"
-	"github.com/supabase/cli/pkg/config"
+	"github.com/noTreeTeam/cli/internal/db/start"
+	"github.com/noTreeTeam/cli/internal/functions/serve"
+	"github.com/noTreeTeam/cli/internal/seed/buckets"
+	"github.com/noTreeTeam/cli/internal/services"
+	"github.com/noTreeTeam/cli/internal/status"
+	"github.com/noTreeTeam/cli/internal/utils"
+	"github.com/noTreeTeam/cli/internal/utils/flags"
+	"github.com/noTreeTeam/cli/pkg/config"
 )
 
 func Run(ctx context.Context, fsys afero.Fs, excludedContainers []string, ignoreHealthCheck bool) error {
@@ -380,7 +380,7 @@ EOF
 				Env: []string{
 					"KONG_DATABASE=off",
 					"KONG_DECLARATIVE_CONFIG=/home/kong/kong.yml",
-					"KONG_DNS_ORDER=LAST,A,CNAME", // https://github.com/supabase/cli/issues/14
+					"KONG_DNS_ORDER=LAST,A,CNAME", // https://github.com/noTreeTeam/cli/issues/14
 					"KONG_PLUGINS=request-transformer,cors",
 					fmt.Sprintf("KONG_PORT_MAPS=%d:8000", utils.Config.Api.Port),
 					// Need to increase the nginx buffers in kong to avoid it rejecting the rather

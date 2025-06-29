@@ -7,9 +7,9 @@ import (
 
 	"github.com/go-errors/errors"
 	"github.com/google/uuid"
-	"github.com/supabase/cli/internal/sso/internal/render"
-	"github.com/supabase/cli/internal/utils"
-	"github.com/supabase/cli/pkg/api"
+	"github.com/noTreeTeam/cli/internal/sso/internal/render"
+	"github.com/noTreeTeam/cli/internal/utils"
+	"github.com/noTreeTeam/cli/pkg/api"
 )
 
 func Run(ctx context.Context, ref, providerId, format string) error {

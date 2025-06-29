@@ -9,8 +9,8 @@ import (
 	"github.com/google/go-github/v62/github"
 	"github.com/h2non/gock"
 	"github.com/stretchr/testify/assert"
-	"github.com/supabase/cli/internal/testing/apitest"
-	"github.com/supabase/cli/pkg/cast"
+	"github.com/noTreeTeam/cli/internal/testing/apitest"
+	"github.com/noTreeTeam/cli/pkg/cast"
 )
 
 func TestLatestRelease(t *testing.T) {

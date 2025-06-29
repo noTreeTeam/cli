@@ -10,7 +10,7 @@ import (
 	"time"
 
 	"github.com/go-errors/errors"
-	"github.com/supabase/cli/pkg/cast"
+	"github.com/noTreeTeam/cli/pkg/cast"
 	"golang.org/x/term"
 )
 

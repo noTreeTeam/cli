@@ -6,11 +6,11 @@ import (
 	"os"
 
 	"github.com/go-errors/errors"
-	"github.com/supabase/cli/internal/migration/list"
-	"github.com/supabase/cli/internal/utils"
-	"github.com/supabase/cli/internal/utils/flags"
-	"github.com/supabase/cli/pkg/api"
-	"github.com/supabase/cli/pkg/cast"
+	"github.com/noTreeTeam/cli/internal/migration/list"
+	"github.com/noTreeTeam/cli/internal/utils"
+	"github.com/noTreeTeam/cli/internal/utils/flags"
+	"github.com/noTreeTeam/cli/pkg/api"
+	"github.com/noTreeTeam/cli/pkg/cast"
 )
 
 func Run(ctx context.Context) error {

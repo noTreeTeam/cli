@@ -19,7 +19,7 @@ import (
 
 	"github.com/go-errors/errors"
 	"github.com/spf13/afero"
-	"github.com/supabase/cli/pkg/function"
+	"github.com/noTreeTeam/cli/pkg/function"
 )
 
 var (

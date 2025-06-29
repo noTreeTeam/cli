@@ -6,7 +6,7 @@ import (
 	"os"
 	"strings"
 
-	"github.com/supabase/cli/pkg/config"
+	"github.com/noTreeTeam/cli/pkg/config"
 )
 
 func main() {

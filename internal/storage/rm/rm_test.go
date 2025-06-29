@@ -8,14 +8,14 @@ import (
 	"github.com/h2non/gock"
 	"github.com/spf13/afero"
 	"github.com/stretchr/testify/assert"
-	"github.com/supabase/cli/internal/testing/apitest"
-	"github.com/supabase/cli/internal/testing/fstest"
-	"github.com/supabase/cli/internal/utils"
-	"github.com/supabase/cli/internal/utils/flags"
-	"github.com/supabase/cli/pkg/api"
-	"github.com/supabase/cli/pkg/cast"
-	"github.com/supabase/cli/pkg/fetcher"
-	"github.com/supabase/cli/pkg/storage"
+	"github.com/noTreeTeam/cli/internal/testing/apitest"
+	"github.com/noTreeTeam/cli/internal/testing/fstest"
+	"github.com/noTreeTeam/cli/internal/utils"
+	"github.com/noTreeTeam/cli/internal/utils/flags"
+	"github.com/noTreeTeam/cli/pkg/api"
+	"github.com/noTreeTeam/cli/pkg/cast"
+	"github.com/noTreeTeam/cli/pkg/fetcher"
+	"github.com/noTreeTeam/cli/pkg/storage"
 )
 
 var mockFile = storage.ObjectResponse{

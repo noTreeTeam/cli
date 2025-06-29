@@ -1,4 +1,4 @@
-module github.com/supabase/cli
+module github.com/noTreeTeam/cli
 
 go 1.24.2
 
@@ -38,7 +38,7 @@ require (
 	github.com/spf13/viper v1.20.1
 	github.com/stretchr/testify v1.10.0
 	github.com/stripe/pg-schema-diff v0.9.0
-	github.com/supabase/cli/pkg v1.0.0
+	github.com/noTreeTeam/cli/pkg v1.0.0
 	github.com/tidwall/jsonc v0.3.2
 	github.com/withfig/autocomplete-tools/packages/cobra v1.2.0
 	github.com/zalando/go-keyring v0.2.6
@@ -343,4 +343,4 @@ require (
 	mvdan.cc/unparam v0.0.0-20250301125049-0df0534333a4 // indirect
 )
 
-replace github.com/supabase/cli/pkg v1.0.0 => ./pkg
+replace github.com/noTreeTeam/cli/pkg v1.0.0 => ./pkg

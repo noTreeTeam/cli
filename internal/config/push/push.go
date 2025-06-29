@@ -6,9 +6,9 @@ import (
 	"os"
 
 	"github.com/spf13/afero"
-	"github.com/supabase/cli/internal/utils"
-	"github.com/supabase/cli/internal/utils/flags"
-	"github.com/supabase/cli/pkg/config"
+	"github.com/noTreeTeam/cli/internal/utils"
+	"github.com/noTreeTeam/cli/internal/utils/flags"
+	"github.com/noTreeTeam/cli/pkg/config"
 )
 
 func Run(ctx context.Context, ref string, fsys afero.Fs) error {

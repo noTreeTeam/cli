@@ -7,7 +7,7 @@ import (
 
 	"github.com/go-errors/errors"
 	"github.com/jackc/pgx/v4"
-	"github.com/supabase/cli/pkg/pgxv5"
+	"github.com/noTreeTeam/cli/pkg/pgxv5"
 )
 
 var (

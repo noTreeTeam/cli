@@ -7,9 +7,9 @@ import (
 
 	"github.com/go-errors/errors"
 	"github.com/go-xmlfmt/xmlfmt"
-	"github.com/supabase/cli/internal/migration/list"
-	"github.com/supabase/cli/internal/utils"
-	"github.com/supabase/cli/pkg/api"
+	"github.com/noTreeTeam/cli/internal/migration/list"
+	"github.com/noTreeTeam/cli/internal/utils"
+	"github.com/noTreeTeam/cli/pkg/api"
 )
 
 func formatProtocol(provider api.GetProviderResponse) string {

@@ -11,8 +11,8 @@ import (
 	"github.com/go-errors/errors"
 	"github.com/go-git/go-git/v5"
 	"github.com/spf13/afero"
-	"github.com/supabase/cli/internal/utils"
-	"github.com/supabase/cli/pkg/config"
+	"github.com/noTreeTeam/cli/internal/utils"
+	"github.com/noTreeTeam/cli/pkg/config"
 )
 
 type CustomName struct {

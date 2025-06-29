@@ -30,8 +30,8 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/joho/godotenv"
 	"github.com/spf13/viper"
-	"github.com/supabase/cli/pkg/cast"
-	"github.com/supabase/cli/pkg/fetcher"
+	"github.com/noTreeTeam/cli/pkg/cast"
+	"github.com/noTreeTeam/cli/pkg/fetcher"
 	"golang.org/x/mod/semver"
 )
 

@@ -13,8 +13,8 @@ import (
 	"github.com/cenkalti/backoff/v4"
 	"github.com/docker/go-units"
 	"github.com/go-errors/errors"
-	"github.com/supabase/cli/pkg/api"
-	"github.com/supabase/cli/pkg/config"
+	"github.com/noTreeTeam/cli/pkg/api"
+	"github.com/noTreeTeam/cli/pkg/config"
 )
 
 const (

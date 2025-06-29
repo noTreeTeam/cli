@@ -5,8 +5,8 @@ import (
 	"fmt"
 
 	"github.com/spf13/afero"
-	"github.com/supabase/cli/internal/storage/client"
-	"github.com/supabase/cli/internal/utils"
+	"github.com/noTreeTeam/cli/internal/storage/client"
+	"github.com/noTreeTeam/cli/internal/utils"
 )
 
 func Run(ctx context.Context, projectRef string, interactive bool, fsys afero.Fs) error {

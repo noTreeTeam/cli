@@ -1,9 +1,9 @@
 package config
 
 import (
-	v1API "github.com/supabase/cli/pkg/api"
-	"github.com/supabase/cli/pkg/cast"
-	"github.com/supabase/cli/pkg/diff"
+	v1API "github.com/noTreeTeam/cli/pkg/api"
+	"github.com/noTreeTeam/cli/pkg/cast"
+	"github.com/noTreeTeam/cli/pkg/diff"
 )
 
 type (

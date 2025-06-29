@@ -1,4 +1,4 @@
-module github.com/supabase/cli/pkg
+module github.com/noTreeTeam/cli/pkg
 
 go 1.24.2
 

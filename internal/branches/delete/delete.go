@@ -7,7 +7,7 @@ import (
 
 	"github.com/go-errors/errors"
 	"github.com/google/uuid"
-	"github.com/supabase/cli/internal/utils"
+	"github.com/noTreeTeam/cli/internal/utils"
 )
 
 func Run(ctx context.Context, branchId string) error {

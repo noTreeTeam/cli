@@ -2,8 +2,8 @@ package cmd
 
 import (
 	"github.com/spf13/cobra"
-	"github.com/supabase/cli/internal/orgs/create"
-	"github.com/supabase/cli/internal/orgs/list"
+	"github.com/noTreeTeam/cli/internal/orgs/create"
+	"github.com/noTreeTeam/cli/internal/orgs/list"
 )
 
 var (

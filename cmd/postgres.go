@@ -3,10 +3,10 @@ package cmd
 import (
 	"github.com/spf13/afero"
 	"github.com/spf13/cobra"
-	"github.com/supabase/cli/internal/postgresConfig/delete"
-	"github.com/supabase/cli/internal/postgresConfig/get"
-	"github.com/supabase/cli/internal/postgresConfig/update"
-	"github.com/supabase/cli/internal/utils/flags"
+	"github.com/noTreeTeam/cli/internal/postgresConfig/delete"
+	"github.com/noTreeTeam/cli/internal/postgresConfig/get"
+	"github.com/noTreeTeam/cli/internal/postgresConfig/update"
+	"github.com/noTreeTeam/cli/internal/utils/flags"
 )
 
 var (

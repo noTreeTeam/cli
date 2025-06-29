@@ -6,8 +6,8 @@ import (
 	"github.com/go-errors/errors"
 	"github.com/spf13/afero"
 	"github.com/spf13/cobra"
-	"github.com/supabase/cli/internal/login"
-	"github.com/supabase/cli/internal/utils"
+	"github.com/noTreeTeam/cli/internal/login"
+	"github.com/noTreeTeam/cli/internal/utils"
 	"golang.org/x/term"
 )
 

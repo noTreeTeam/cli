@@ -16,7 +16,7 @@ import (
 	"github.com/go-git/go-git/v5"
 	"github.com/spf13/afero"
 	"github.com/spf13/viper"
-	"github.com/supabase/cli/pkg/migration"
+	"github.com/noTreeTeam/cli/pkg/migration"
 )
 
 // Assigned using `-ldflags` https://stackoverflow.com/q/11354518

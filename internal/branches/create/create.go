@@ -6,10 +6,10 @@ import (
 
 	"github.com/go-errors/errors"
 	"github.com/spf13/afero"
-	"github.com/supabase/cli/internal/gen/keys"
-	"github.com/supabase/cli/internal/utils"
-	"github.com/supabase/cli/internal/utils/flags"
-	"github.com/supabase/cli/pkg/api"
+	"github.com/noTreeTeam/cli/internal/gen/keys"
+	"github.com/noTreeTeam/cli/internal/utils"
+	"github.com/noTreeTeam/cli/internal/utils/flags"
+	"github.com/noTreeTeam/cli/pkg/api"
 )
 
 func Run(ctx context.Context, body api.CreateBranchBody, fsys afero.Fs) error {

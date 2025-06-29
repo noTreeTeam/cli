@@ -9,11 +9,11 @@ import (
 	"github.com/google/uuid"
 	"github.com/jackc/pgconn"
 	"github.com/spf13/afero"
-	"github.com/supabase/cli/internal/migration/list"
-	"github.com/supabase/cli/internal/projects/apiKeys"
-	"github.com/supabase/cli/internal/utils"
-	"github.com/supabase/cli/pkg/api"
-	"github.com/supabase/cli/pkg/cast"
+	"github.com/noTreeTeam/cli/internal/migration/list"
+	"github.com/noTreeTeam/cli/internal/projects/apiKeys"
+	"github.com/noTreeTeam/cli/internal/utils"
+	"github.com/noTreeTeam/cli/pkg/api"
+	"github.com/noTreeTeam/cli/pkg/cast"
 )
 
 func Run(ctx context.Context, branchId string, fsys afero.Fs) error {

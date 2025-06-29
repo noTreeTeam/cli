@@ -6,8 +6,8 @@ import (
 
 	"github.com/go-errors/errors"
 	"github.com/spf13/afero"
-	"github.com/supabase/cli/internal/utils"
-	"github.com/supabase/cli/pkg/api"
+	"github.com/noTreeTeam/cli/internal/utils"
+	"github.com/noTreeTeam/cli/pkg/api"
 )
 
 func Run(ctx context.Context, projectRef string, enforceDbSsl bool, fsys afero.Fs) error {

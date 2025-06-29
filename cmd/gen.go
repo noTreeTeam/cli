@@ -8,10 +8,10 @@ import (
 	"github.com/go-errors/errors"
 	"github.com/spf13/afero"
 	"github.com/spf13/cobra"
-	"github.com/supabase/cli/internal/gen/keys"
-	"github.com/supabase/cli/internal/gen/types"
-	"github.com/supabase/cli/internal/utils"
-	"github.com/supabase/cli/internal/utils/flags"
+	"github.com/noTreeTeam/cli/internal/gen/keys"
+	"github.com/noTreeTeam/cli/internal/gen/types"
+	"github.com/noTreeTeam/cli/internal/utils"
+	"github.com/noTreeTeam/cli/internal/utils/flags"
 )
 
 var (

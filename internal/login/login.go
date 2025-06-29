@@ -20,9 +20,9 @@ import (
 	"github.com/go-errors/errors"
 	"github.com/google/uuid"
 	"github.com/spf13/afero"
-	"github.com/supabase/cli/internal/migration/new"
-	"github.com/supabase/cli/internal/utils"
-	"github.com/supabase/cli/pkg/fetcher"
+	"github.com/noTreeTeam/cli/internal/migration/new"
+	"github.com/noTreeTeam/cli/internal/utils"
+	"github.com/noTreeTeam/cli/pkg/fetcher"
 )
 
 type RunParams struct {

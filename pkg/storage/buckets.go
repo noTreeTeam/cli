@@ -4,7 +4,7 @@ import (
 	"context"
 	"net/http"
 
-	"github.com/supabase/cli/pkg/fetcher"
+	"github.com/noTreeTeam/cli/pkg/fetcher"
 )
 
 type BucketResponse struct {

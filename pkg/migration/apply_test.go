@@ -9,7 +9,7 @@ import (
 
 	"github.com/jackc/pgerrcode"
 	"github.com/stretchr/testify/assert"
-	"github.com/supabase/cli/pkg/pgtest"
+	"github.com/noTreeTeam/cli/pkg/pgtest"
 )
 
 func TestPendingMigrations(t *testing.T) {

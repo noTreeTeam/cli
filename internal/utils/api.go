@@ -12,9 +12,9 @@ import (
 	"github.com/go-errors/errors"
 	"github.com/spf13/afero"
 	"github.com/spf13/viper"
-	"github.com/supabase/cli/internal/utils/cloudflare"
-	supabase "github.com/supabase/cli/pkg/api"
-	"github.com/supabase/cli/pkg/cast"
+	"github.com/noTreeTeam/cli/internal/utils/cloudflare"
+	supabase "github.com/noTreeTeam/cli/pkg/api"
+	"github.com/noTreeTeam/cli/pkg/cast"
 )
 
 const (

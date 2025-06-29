@@ -2,7 +2,7 @@ package flags
 
 import (
 	"github.com/spf13/afero"
-	"github.com/supabase/cli/internal/utils"
+	"github.com/noTreeTeam/cli/internal/utils"
 )
 
 func LoadConfig(fsys afero.Fs) error {

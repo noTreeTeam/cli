@@ -8,9 +8,9 @@ import (
 	"os"
 	"time"
 
-	"github.com/supabase/cli/pkg/config"
-	"github.com/supabase/cli/pkg/fetcher"
-	"github.com/supabase/cli/pkg/storage"
+	"github.com/noTreeTeam/cli/pkg/config"
+	"github.com/noTreeTeam/cli/pkg/fetcher"
+	"github.com/noTreeTeam/cli/pkg/storage"
 )
 
 func main() {

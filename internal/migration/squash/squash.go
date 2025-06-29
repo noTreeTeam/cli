@@ -14,13 +14,13 @@ import (
 	"github.com/jackc/pgconn"
 	"github.com/jackc/pgx/v4"
 	"github.com/spf13/afero"
-	"github.com/supabase/cli/internal/db/diff"
-	"github.com/supabase/cli/internal/db/dump"
-	"github.com/supabase/cli/internal/db/start"
-	"github.com/supabase/cli/internal/migration/list"
-	"github.com/supabase/cli/internal/migration/repair"
-	"github.com/supabase/cli/internal/utils"
-	"github.com/supabase/cli/pkg/migration"
+	"github.com/noTreeTeam/cli/internal/db/diff"
+	"github.com/noTreeTeam/cli/internal/db/dump"
+	"github.com/noTreeTeam/cli/internal/db/start"
+	"github.com/noTreeTeam/cli/internal/migration/list"
+	"github.com/noTreeTeam/cli/internal/migration/repair"
+	"github.com/noTreeTeam/cli/internal/utils"
+	"github.com/noTreeTeam/cli/pkg/migration"
 )
 
 var ErrMissingVersion = errors.New("version not found")

@@ -16,10 +16,10 @@ import (
 	"github.com/go-errors/errors"
 	"github.com/spf13/afero"
 	"github.com/spf13/viper"
-	"github.com/supabase/cli/internal/functions/deploy"
-	"github.com/supabase/cli/internal/secrets/set"
-	"github.com/supabase/cli/internal/utils"
-	"github.com/supabase/cli/internal/utils/flags"
+	"github.com/noTreeTeam/cli/internal/functions/deploy"
+	"github.com/noTreeTeam/cli/internal/secrets/set"
+	"github.com/noTreeTeam/cli/internal/utils"
+	"github.com/noTreeTeam/cli/internal/utils/flags"
 )
 
 type InspectMode string

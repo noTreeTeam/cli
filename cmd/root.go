@@ -16,9 +16,9 @@ import (
 	"github.com/spf13/afero"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
-	"github.com/supabase/cli/internal/debug"
-	"github.com/supabase/cli/internal/utils"
-	"github.com/supabase/cli/internal/utils/flags"
+	"github.com/noTreeTeam/cli/internal/debug"
+	"github.com/noTreeTeam/cli/internal/utils"
+	"github.com/noTreeTeam/cli/internal/utils/flags"
 	"golang.org/x/mod/semver"
 )
 
@@ -215,7 +215,7 @@ func recoverAndExit() {
 		eventId := sentry.CurrentHub().Recover(err)
 		if eventId != nil && sentry.Flush(2*time.Second) {
 			fmt.Fprintln(os.Stderr, "Sent crash report:", *eventId)
-			fmt.Fprintln(os.Stderr, "Quote the crash ID above when filing a bug report: https://github.com/supabase/cli/issues/new/choose")
+			fmt.Fprintln(os.Stderr, "Quote the crash ID above when filing a bug report: https://github.com/noTreeTeam/cli/issues/new/choose")
 		}
 	}
 	os.Exit(1)

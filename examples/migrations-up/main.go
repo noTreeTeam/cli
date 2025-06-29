@@ -6,8 +6,8 @@ import (
 	"log"
 	"os"
 
-	"github.com/supabase/cli/pkg/migration"
-	"github.com/supabase/cli/pkg/pgxv5"
+	"github.com/noTreeTeam/cli/pkg/migration"
+	"github.com/noTreeTeam/cli/pkg/pgxv5"
 )
 
 func main() {

@@ -9,8 +9,8 @@ import (
 
 	"github.com/go-errors/errors"
 	"github.com/spf13/afero"
-	"github.com/supabase/cli/internal/migration/list"
-	"github.com/supabase/cli/internal/utils"
+	"github.com/noTreeTeam/cli/internal/migration/list"
+	"github.com/noTreeTeam/cli/internal/utils"
 )
 
 func Run(ctx context.Context, projectRef string, fsys afero.Fs) error {

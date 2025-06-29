@@ -8,10 +8,10 @@ import (
 	"github.com/go-errors/errors"
 	"github.com/google/uuid"
 	"github.com/spf13/afero"
-	"github.com/supabase/cli/internal/sso/internal/render"
-	"github.com/supabase/cli/internal/sso/internal/saml"
-	"github.com/supabase/cli/internal/utils"
-	"github.com/supabase/cli/pkg/api"
+	"github.com/noTreeTeam/cli/internal/sso/internal/render"
+	"github.com/noTreeTeam/cli/internal/sso/internal/saml"
+	"github.com/noTreeTeam/cli/internal/utils"
+	"github.com/noTreeTeam/cli/pkg/api"
 )
 
 var Fs = afero.NewOsFs()

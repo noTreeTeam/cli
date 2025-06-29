@@ -2,9 +2,9 @@ package cmd
 
 import (
 	"github.com/spf13/cobra"
-	"github.com/supabase/cli/internal/restrictions/get"
-	"github.com/supabase/cli/internal/restrictions/update"
-	"github.com/supabase/cli/internal/utils/flags"
+	"github.com/noTreeTeam/cli/internal/restrictions/get"
+	"github.com/noTreeTeam/cli/internal/restrictions/update"
+	"github.com/noTreeTeam/cli/internal/utils/flags"
 )
 
 var (

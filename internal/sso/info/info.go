@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/supabase/cli/internal/sso/internal/render"
-	"github.com/supabase/cli/internal/utils"
+	"github.com/noTreeTeam/cli/internal/sso/internal/render"
+	"github.com/noTreeTeam/cli/internal/utils"
 )
 
 func Run(ctx context.Context, ref string, format string) error {
