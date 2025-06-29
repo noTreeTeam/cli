@@ -25,6 +25,9 @@ jobs:
           if [ -z "$tag" ]; then
             tag=$(curl -s https://api.github.com/repos/${{ github.repository }}/releases/latest | jq -r .tag_name)
           fi
+          if [ "$tag" = "null" ] || [ -z "$tag" ]; then
+            tag=$(curl -s https://api.github.com/repos/supabase/cli/releases/latest | jq -r .tag_name)
+          fi
           echo "tagName=$tag" >> "$GITHUB_OUTPUT"
       - run: gh release edit ${{ steps.prerelease.outputs.tagName }} --latest --prerelease=false
 
