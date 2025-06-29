@@ -42,6 +42,19 @@ Specify `SUPABASE_REPO` for the repository and `SUPABASE_VERSION` for the tag na
 SUPABASE_REPO=myorg/cli SUPABASE_VERSION=latest npm i github:myorg/cli --save-dev
 ```
 
+Alternatively, reference the GitHub repository directly in your `package.json`
+to keep the CLI local to your project:
+
+```json
+{
+  "devDependencies": {
+    "supabase": "github:myorg/cli"
+  }
+}
+```
+
+Then run `npm install` and access the CLI via `npx supabase`.
+
 > **Note**
 For Bun versions below v1.0.17, you must add `supabase` as a [trusted dependency](https://bun.sh/guides/install/trusted) before running `bun add -D supabase`.
 
