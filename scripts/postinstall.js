@@ -192,7 +192,7 @@ async function main() {
   // Link the binaries in postinstall to support yarn
   await binLinks({
     path: path.resolve("."),
-    pkg: { ...pkg, bin: { [pkg.name]: binPath } },
+    pkg: pkg,
   });
 
   console.info("Installed Supabase CLI successfully");
