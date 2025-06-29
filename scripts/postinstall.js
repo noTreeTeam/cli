@@ -155,7 +155,8 @@ async function main() {
   // Then, decompress the binary -- we will first Un-GZip, then we will untar.
   const ungz = zlib.createGunzip();
   const binName = path.basename(binPath);
-  const untar = extract({ cwd: binDir }, [binName]);
+  // Extract all files and then move the binary to the correct location
+  const untar = extract({ cwd: binDir });
 
   // Update the hash with the binary data as it's being downloaded.
   resp.body
@@ -188,6 +189,17 @@ async function main() {
     untar.on("error", reject);
     untar.on("end", () => resolve());
   });
+
+  // Move the binary from extracted directory to final location
+  const extractedDirName = `${binaryName}_${platform}_${arch}`;
+  const extractedBinaryPath = path.join(binDir, extractedDirName, binName);
+  const finalBinaryPath = path.join(binDir, binName);
+  
+  if (await fs.promises.access(extractedBinaryPath).then(() => true).catch(() => false)) {
+    await fs.promises.rename(extractedBinaryPath, finalBinaryPath);
+    // Remove the empty directory
+    await fs.promises.rmdir(path.join(binDir, extractedDirName));
+  }
 
   // Link the binaries in postinstall to support yarn
   await binLinks({
