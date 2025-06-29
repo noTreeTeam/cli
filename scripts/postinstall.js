@@ -195,10 +195,25 @@ async function main() {
   const extractedBinaryPath = path.join(binDir, extractedDirName, binName);
   const finalBinaryPath = path.join(binDir, binName);
   
-  if (await fs.promises.access(extractedBinaryPath).then(() => true).catch(() => false)) {
+  console.info("Looking for extracted binary at:", extractedBinaryPath);
+  console.info("Will move to:", finalBinaryPath);
+  
+  try {
+    await fs.promises.access(extractedBinaryPath);
+    console.info("Found extracted binary, moving...");
     await fs.promises.rename(extractedBinaryPath, finalBinaryPath);
     // Remove the empty directory
     await fs.promises.rmdir(path.join(binDir, extractedDirName));
+    console.info("Binary moved successfully");
+  } catch (error) {
+    console.error("Error moving binary:", error.message);
+    // List what's actually in the bin directory
+    try {
+      const files = await fs.promises.readdir(binDir);
+      console.info("Files in bin directory:", files);
+    } catch (e) {
+      console.error("Could not list bin directory:", e.message);
+    }
   }
 
   // Link the binaries in postinstall to support yarn
