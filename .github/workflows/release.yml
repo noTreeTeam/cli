@@ -21,8 +21,8 @@ jobs:
       - uses: actions/checkout@v4
       - id: prerelease
         run: |
-          gh release list --limit 1 --json tagName --jq \
-          '.[]|to_entries|map("\(.key)=\(.value|tostring)")|.[]' >> $GITHUB_OUTPUT
+          tag=$(gh release list --limit 1 --json tagName --jq '.[0].tagName')
+          echo "tagName=$tag" >> "$GITHUB_OUTPUT"
       - run: gh release edit ${{ steps.prerelease.outputs.tagName }} --latest --prerelease=false
 
   commit:
