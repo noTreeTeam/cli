@@ -201,11 +201,19 @@ func GetRegistryImageUrl(imageName string) string {
 	}
 	// Configure mirror registry
 	parts := strings.Split(imageName, "/")
-	imageName = parts[len(parts)-1]
-	if registry == "ghcr.io" {
-		return registry + "/notreeteam/" + imageName
+	imageNameOnly := parts[len(parts)-1]
+	
+	// Only replace Postgres images with notreeteam registry, leave all others as upstream
+	if registry == "ghcr.io" && strings.HasPrefix(imageNameOnly, "postgres:") {
+		return registry + "/notreeteam/" + imageNameOnly
 	}
-	return registry + "/supabase/" + imageName
+	
+	// For all other images when using ghcr.io, keep the original upstream source
+	if registry == "ghcr.io" {
+		return imageName
+	}
+	
+	return registry + "/supabase/" + imageNameOnly
 }
 
 func DockerImagePull(ctx context.Context, imageTag string, w io.Writer) error {
