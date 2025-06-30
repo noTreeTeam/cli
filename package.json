@@ -1,6 +1,6 @@
 {
   "name": "@notreeteam/supabase-cli",
-  "version": "0.0.0-automated",
+  "version": "2.30.2-notreeteam",
   "description": "Supabase CLI (noTreeTeam fork)",
   "repository": "noTreeTeam/cli",
   "homepage": "https://supabase.com/docs/reference/cli",
