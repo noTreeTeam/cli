@@ -183,7 +183,8 @@ async function main() {
     path.join(tempDir, extractedDirName, binName),  // Standard structure
     path.join(tempDir, binName),  // Flat structure
     path.join(tempDir, extractedDirName, `${binaryName}.exe`),  // Windows with .exe
-    path.join(tempDir, `${binaryName}.exe`)  // Flat Windows
+    path.join(tempDir, `${binaryName}.exe`),  // Flat Windows
+    path.join(tempDir, `${binaryName}_${platform}_${arch}.exe`)  // Flat Windows with platform/arch
   ];
 
   let foundBinary = false;
