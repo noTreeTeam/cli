@@ -22,9 +22,7 @@ func ParseProjectRef(ctx context.Context, fsys afero.Fs) error {
 	}
 	// Prompt as the last resort
 	if term.IsTerminal(int(os.Stdin.Fd())) {
-		// Interactive prompts should always be written to stderr
-		opts := []tea.ProgramOption{tea.WithOutput(os.Stderr)}
-		return PromptProjectRef(ctx, "Select a project:", opts...)
+		return PromptProjectRef(ctx, "Select a project:")
 	}
 	return errors.New(utils.ErrNotLinked)
 }
