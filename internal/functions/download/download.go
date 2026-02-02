@@ -119,32 +119,31 @@ func downloadFunction(ctx context.Context, projectRef, slug, extractScriptPath s
 }
 
 func Run(ctx context.Context, slug, projectRef string, useLegacyBundle, useDocker bool, fsys afero.Fs) error {
-	if slug == "" {
-		return RunAll(ctx, projectRef, useLegacyBundle, useDocker, fsys)
-	}
 	// Sanity check
 	if err := flags.LoadConfig(fsys); err != nil {
 		return err
 	}
 
+	// Defaults to server-side unbundling with multipart/form-data
+	downloader := downloadWithServerSideUnbundle
 	if useLegacyBundle {
-		return RunLegacy(ctx, slug, projectRef, fsys)
-	}
-
-	if useDocker {
+		downloader = RunLegacy
+	} else if useDocker {
 		if utils.IsDockerRunning(ctx) {
-			// download eszip file for client-side unbundling with edge-runtime
-			return downloadWithDockerUnbundle(ctx, slug, projectRef, fsys)
+			// Download eszip file for client-side unbundling with edge-runtime
+			downloader = downloadWithDockerUnbundle
 		} else {
 			fmt.Fprintln(os.Stderr, utils.Yellow("WARNING:"), "Docker is not running")
 		}
 	}
 
-	// Use server-side unbundling with multipart/form-data
-	return downloadWithServerSideUnbundle(ctx, slug, projectRef, fsys)
+	if len(slug) > 0 {
+		return downloader(ctx, slug, projectRef, fsys)
+	}
+	return downloadAll(ctx, projectRef, downloader, fsys)
 }
 
-func RunAll(ctx context.Context, projectRef string, useLegacyBundle, useDocker bool, fsys afero.Fs) error {
+func downloadAll(ctx context.Context, projectRef string, downloader func(context.Context, string, string, afero.Fs) error) error {
 	resp, err := utils.GetSupabase().V1ListAllFunctionsWithResponse(ctx, projectRef)
 	if err != nil {
 		return errors.Errorf("failed to list functions: %w", err)
@@ -159,18 +158,15 @@ func RunAll(ctx context.Context, projectRef string, useLegacyBundle, useDocker b
 		return nil
 	}
 
-	fmt.Printf("Found %d function(s) to download\n", len(functions))
-
-    for _, function := range functions {
-        fmt.Println("\n" + strings.Repeat("-", 50))
-        if err := Run(ctx, function.Slug, projectRef, useLegacyBundle, useDocker, fsys); err != nil {
-            fmt.Fprintln(os.Stderr, utils.Yellow("WARNING:"), "Failed to download", function.Slug+":", err)
-            return errors.Errorf("failed to download %s: %w", function.Slug, err)
+	fmt.Fprintf(os.Stderr, "Found %d function(s) to download\n", len(functions))
+    for _, f := range functions {
+        fmt.Fprintln(os.Stderr, "Downloading function:", f.Slug)
+        if err := downloader(ctx, f.Slug, projectRef, fsys); err != nil {
+            return err
         }
     }
 
-	fmt.Println("\n" + strings.Repeat("-", 50))
-	fmt.Printf("Successfully downloaded all %d function(s)\n", len(functions))
+	fmt.Fprintln(os.Stderr, "Successfully downloaded all functions from project", utils.Aqua(projectRef))
 	return nil
 }
 
