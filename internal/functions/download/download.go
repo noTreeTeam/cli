@@ -159,11 +159,11 @@ func downloadAll(ctx context.Context, projectRef string, fsys afero.Fs, download
 	}
 
 	fmt.Fprintf(os.Stderr, "Found %d function(s) to download\n", len(functions))
-    for _, f := range functions {
-        if err := downloader(ctx, f.Slug, projectRef, fsys); err != nil {
-            return err
-        }
-    }
+	for _, f := range functions {
+		if err := downloader(ctx, f.Slug, projectRef, fsys); err != nil {
+			return err
+		}
+	}
 
 	fmt.Fprintln(os.Stderr, "Successfully downloaded all functions from project", utils.Aqua(projectRef))
 	return nil
