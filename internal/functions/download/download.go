@@ -119,6 +119,9 @@ func downloadFunction(ctx context.Context, projectRef, slug, extractScriptPath s
 }
 
 func Run(ctx context.Context, slug, projectRef string, useLegacyBundle, useDocker bool, fsys afero.Fs) error {
+	if slug == "" {
+		return RunAll(ctx, projectRef, useLegacyBundle, useDocker, fsys)
+	}
 	// Sanity check
 	if err := flags.LoadConfig(fsys); err != nil {
 		return err
@@ -139,6 +142,43 @@ func Run(ctx context.Context, slug, projectRef string, useLegacyBundle, useDocke
 
 	// Use server-side unbundling with multipart/form-data
 	return downloadWithServerSideUnbundle(ctx, slug, projectRef, fsys)
+}
+
+func RunAll(ctx context.Context, projectRef string, useLegacyBundle, useDocker bool, fsys afero.Fs) error {
+	resp, err := utils.GetSupabase().V1ListAllFunctionsWithResponse(ctx, projectRef)
+	if err != nil {
+		return errors.Errorf("failed to list functions: %w", err)
+	}
+	if resp.JSON200 == nil {
+		return errors.Errorf("unexpected list functions status %d: %s", resp.StatusCode(), string(resp.Body))
+	}
+
+	functions := *resp.JSON200
+	if len(functions) == 0 {
+		fmt.Println("No functions found in project " + utils.Aqua(projectRef))
+		return nil
+	}
+
+	fmt.Printf("Found %d function(s) to download\n", len(functions))
+
+	var downloadErrors []error
+	for _, function := range functions {
+		fmt.Println("\n" + strings.Repeat("-", 50))
+		if err := Run(ctx, function.Slug, projectRef, useLegacyBundle, useDocker, fsys); err != nil {
+			fmt.Fprintln(os.Stderr, utils.Yellow("WARNING:"), "Failed to download", function.Slug+":", err)
+			downloadErrors = append(downloadErrors, errors.Errorf("failed to download %s: %w", function.Slug, err))
+			continue
+		}
+	}
+
+	if len(downloadErrors) > 0 {
+		fmt.Fprintf(os.Stderr, "\n%s Failed to download %d function(s)\n", utils.Yellow("WARNING:"), len(downloadErrors))
+		return errors.Errorf("some functions failed to download")
+	}
+
+	fmt.Println("\n" + strings.Repeat("-", 50))
+	fmt.Printf("Successfully downloaded all %d function(s)\n", len(functions))
+	return nil
 }
 
 func downloadWithDockerUnbundle(ctx context.Context, slug string, projectRef string, fsys afero.Fs) error {
