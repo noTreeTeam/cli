@@ -56,7 +56,7 @@ func RunLegacy(ctx context.Context, slug string, projectRef string, fsys afero.F
 		return err
 	}
 
-	fmt.Fprintln(os.Stderr, "Downloaded Function " + utils.Aqua(slug) + " from project " + utils.Aqua(projectRef) + ".")
+	fmt.Fprintf(os.Stderr, "Downloaded Function %s from project %s.\n", utils.Aqua(slug), utils.Aqua(projectRef))
 	return nil
 }
 
@@ -341,7 +341,7 @@ func downloadWithServerSideUnbundle(ctx context.Context, slug, projectRef string
 		}
 	}
 
-	fmt.Fprintln(os.Stderr, "Downloaded Function " + utils.Aqua(slug) + " from project " + utils.Aqua(projectRef) + ".")
+	fmt.Fprintf(os.Stderr, "Downloaded Function %s from project %s.\n", utils.Aqua(slug), utils.Aqua(projectRef))
 	return nil
 }
 
