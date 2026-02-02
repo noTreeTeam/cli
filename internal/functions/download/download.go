@@ -140,10 +140,10 @@ func Run(ctx context.Context, slug, projectRef string, useLegacyBundle, useDocke
 	if len(slug) > 0 {
 		return downloader(ctx, slug, projectRef, fsys)
 	}
-	return downloadAll(ctx, projectRef, downloader, fsys)
+	return downloadAll(ctx, projectRef, fsys, downloader)
 }
 
-func downloadAll(ctx context.Context, projectRef string, downloader func(context.Context, string, string, afero.Fs) error) error {
+func downloadAll(ctx context.Context, projectRef string, fsys afero.Fs, downloader func(context.Context, string, string, afero.Fs) error) error {
 	resp, err := utils.GetSupabase().V1ListAllFunctionsWithResponse(ctx, projectRef)
 	if err != nil {
 		return errors.Errorf("failed to list functions: %w", err)
