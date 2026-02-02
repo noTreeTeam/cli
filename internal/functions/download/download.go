@@ -56,7 +56,7 @@ func RunLegacy(ctx context.Context, slug string, projectRef string, fsys afero.F
 		return err
 	}
 
-	fmt.Println("Downloaded Function " + utils.Aqua(slug) + " from project " + utils.Aqua(projectRef) + ".")
+	fmt.Fprintln(os.Stderr, "Downloaded Function " + utils.Aqua(slug) + " from project " + utils.Aqua(projectRef) + ".")
 	return nil
 }
 
@@ -85,7 +85,7 @@ func getFunctionMetadata(ctx context.Context, projectRef, slug string) (*api.Fun
 }
 
 func downloadFunction(ctx context.Context, projectRef, slug, extractScriptPath string) error {
-	fmt.Println("Downloading " + utils.Bold(slug))
+	fmt.Fprintln(os.Stderr, "Downloading function:", utils.Bold(slug))
 	denoPath, err := utils.GetDenoPath()
 	if err != nil {
 		return err
@@ -160,7 +160,6 @@ func downloadAll(ctx context.Context, projectRef string, downloader func(context
 
 	fmt.Fprintf(os.Stderr, "Found %d function(s) to download\n", len(functions))
     for _, f := range functions {
-        fmt.Fprintln(os.Stderr, "Downloading function:", f.Slug)
         if err := downloader(ctx, f.Slug, projectRef, fsys); err != nil {
             return err
         }
@@ -191,7 +190,7 @@ func downloadWithDockerUnbundle(ctx context.Context, slug string, projectRef str
 }
 
 func downloadOne(ctx context.Context, slug, projectRef string, fsys afero.Fs) (string, error) {
-	fmt.Println("Downloading " + utils.Bold(slug))
+	fmt.Fprintln(os.Stderr, "Downloading function:", utils.Bold(slug))
 	resp, err := utils.GetSupabase().V1GetAFunctionBody(ctx, projectRef, slug)
 	if err != nil {
 		return "", errors.Errorf("failed to get function body: %w", err)
@@ -342,7 +341,7 @@ func downloadWithServerSideUnbundle(ctx context.Context, slug, projectRef string
 		}
 	}
 
-	fmt.Println("Downloaded Function " + utils.Aqua(slug) + " from project " + utils.Aqua(projectRef) + ".")
+	fmt.Fprintln(os.Stderr, "Downloaded Function " + utils.Aqua(slug) + " from project " + utils.Aqua(projectRef) + ".")
 	return nil
 }
 
