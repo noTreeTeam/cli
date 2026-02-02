@@ -154,7 +154,7 @@ func downloadAll(ctx context.Context, projectRef string, fsys afero.Fs, download
 
 	functions := *resp.JSON200
 	if len(functions) == 0 {
-		fmt.Fprintln(os.Stderr,"No functions found in project " + utils.Aqua(projectRef))
+		fmt.Fprintln(os.Stderr, "No functions found in project ", utils.Aqua(projectRef))
 		return nil
 	}
 
