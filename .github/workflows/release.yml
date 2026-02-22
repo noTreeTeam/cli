@@ -40,7 +40,7 @@ jobs:
       - name: Update package.json version
         run: |
           VERSION="${GITHUB_REF_NAME#v}"
-          npm --git-tag-version=false version "$VERSION"
+          npm --git-tag-version=false --allow-same-version version "$VERSION"
 
       - name: Push version update
         run: |
