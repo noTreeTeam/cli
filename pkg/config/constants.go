@@ -9,9 +9,9 @@ import (
 )
 
 const (
-	pg13  = "supabase/postgres:13.3.0"
-	pg14  = "supabase/postgres:14.1.0.89"
-	pg15  = "supabase/postgres:15.8.1.085"
+	pg13  = "ghcr.io/notreeteam/postgres:13.3.0"
+	pg14  = "ghcr.io/notreeteam/postgres:14.1.0.89"
+	pg15  = "ghcr.io/notreeteam/postgres:15.8.1.085"
 	deno1 = "supabase/edge-runtime:v1.68.4"
 )
 

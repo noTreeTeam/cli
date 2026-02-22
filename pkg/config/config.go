@@ -826,9 +826,9 @@ func (c *config) Validate(fsys fs.FS) error {
 	case 15, 17:
 		if len(c.Experimental.OrioleDBVersion) > 0 {
 			if VersionCompare(c.Experimental.OrioleDBVersion, "15.1.1.13") > 0 {
-				c.Db.Image = fmt.Sprintf("supabase/postgres:%s-orioledb", c.Experimental.OrioleDBVersion)
+				c.Db.Image = fmt.Sprintf("ghcr.io/notreeteam/postgres:%s-orioledb", c.Experimental.OrioleDBVersion)
 			} else {
-				c.Db.Image = "supabase/postgres:orioledb-" + c.Experimental.OrioleDBVersion
+				c.Db.Image = "ghcr.io/notreeteam/postgres:orioledb-" + c.Experimental.OrioleDBVersion
 			}
 			if err := assertEnvLoaded(c.Experimental.S3Host); err != nil {
 				return err
