@@ -199,8 +199,12 @@ func GetRegistryImageUrl(imageName string) string {
 	if registry == "docker.io" {
 		return imageName
 	}
-	// Configure mirror registry
+	// Pass through images that already specify a different registry host (e.g. ghcr.io/notreeteam/...)
 	parts := strings.Split(imageName, "/")
+	if len(parts) >= 2 && strings.ContainsAny(parts[0], ".:") && parts[0] != "public.ecr.aws" {
+		return imageName
+	}
+	// Configure mirror registry
 	imageName = parts[len(parts)-1]
 	return registry + "/supabase/" + imageName
 }
