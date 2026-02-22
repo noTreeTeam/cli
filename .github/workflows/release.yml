@@ -47,5 +47,5 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add package.json
-          git commit -m "chore: bump version to ${GITHUB_REF_NAME#v}"
+          git diff --cached --quiet || git commit -m "chore: bump version to ${GITHUB_REF_NAME#v}"
           git push origin main
